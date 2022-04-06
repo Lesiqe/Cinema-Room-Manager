@@ -1,0 +1,166 @@
+   private static boolean exit = false;
+    private static int tickets = 0;
+    private static double percentage = 0d;
+    private static int currentIncome = 0;
+    private static int totalIncome = 0;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter the number of rows:");
+        int c = scanner.nextInt() + 1;
+        int e = c - 1;
+        System.out.println("Enter the number of seats in each row:");
+        int d = scanner.nextInt() + 1;
+        int f = d - 1;
+
+        String[][] array = new String[c][d];
+
+
+        makeSeats(array, c, d);
+        totalIncomeCalculation(e, f);
+
+        while(!exit) {
+            printMenu(array, c, d, e, f);
+        }
+
+//        printSeats(array, c, d);
+//
+//
+//        System.out.println();
+//
+//        System.out.println("Cinema:");
+//
+//        printSeats(array, c, d);
+
+    }
+
+    private static void totalIncomeCalculation(int e, int f) {
+        final int two = 2;
+        if (e * f <= 60) {
+            totalIncome = e * f * 10;
+        } else if (e * f > 60) {
+            int g = 0;
+            if (e % two == 0) {
+                g = e / two * f * 8 + e / two * f * 10;
+            } else if (e % two != 0) {
+                g = e / two * f * 10 + (e / two + 1) * f * 8;
+            }
+            totalIncome = g;
+        }
+    }
+
+    private static boolean printMenu(String[][] array, int c, int d, int e, int f) {
+        System.out.println("1. Show the seats");
+        System.out.println("2. Buy a ticket");
+        System.out.println("3. Statistics");
+        System.out.println("0. Exit");
+
+        Scanner scanner = new Scanner(System.in);
+        int option = scanner.nextInt();
+
+        switch (option) {
+            case 1:
+                printSeats(array, c, d);
+                break;
+            case 2:
+                buyTicket(array, e, f);
+                break;
+            case 3:
+                statistics(tickets, percentage, currentIncome, totalIncome);
+                break;
+            case 0:
+                exit = true;
+                break;
+            default:
+                System.out.println("Not a valid option!");
+                break;
+        }
+        return exit;
+    }
+
+    public static void statistics(int tickets, double percentage, int currentIncome, int totalIncome) {
+        System.out.println();
+        System.out.printf("Number of purchased tickets: %d%n", tickets );
+        System.out.printf("Percentage: %.2f%n", percentage);
+        System.out.printf("Current income: $%d%n", currentIncome);
+        System.out.printf("Total income: $%d%n%n", totalIncome);
+    }
+
+    private static void buyTicket(String[][] array, int e, int f) {
+        boolean couldBuy = true;
+
+        while (couldBuy) {
+            Scanner scanner = new Scanner(System.in);
+            final int two = 2;
+            System.out.println("Enter a row number:");
+            int a = scanner.nextInt();
+            System.out.println("Enter a seat number in that row:");
+            int b = scanner.nextInt();
+
+            if (a > e || b > f) {
+                System.out.println("Wrong input!");
+            } else if (array[a][b] == "B") {
+                System.out.println("That ticket has already been purchased!");
+            } else {
+                array[a][b] = "B";
+
+                System.out.println("Ticket price: ");
+
+                if (e * f <= 60) {
+                    System.out.println("$" + 10);
+                    currentIncome += 10;
+                } else if (e * f > 60) {
+                    int g = 0;
+                    if (a <= e / two) {
+                        g = 10;
+                    } else {
+                        g = 8;
+                    }
+                    System.out.println("$" + g);
+                    currentIncome += g;
+                }
+                tickets++;
+                couldBuy = false;
+            }
+            System.out.println();
+            percentage = 100d / (e * f) * tickets;
+        }
+    }
+
+
+    private static void printSeats(String[][] array, int c, int d) {
+        System.out.println();
+        System.out.println("Cinema:");
+        for (int i = 0; i < c; i++) {
+            for (int j = 0; j < d; j++) {
+                System.out.print(array[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    private static void makeSeats(String[][] array, int c, int d) {
+        for (int i = 0; i < c; i++) {
+            for (int j = 0; j < d; j++) {
+                if (i == 0 && j == 0) {
+                    array[i][j] = " ";
+                    for (int k = 1; k < d; k++) {
+                        array[i][k] = k + "";
+                    }
+                    break;
+                }
+
+                if (i > 0 && j == 0) {
+                    array[i][j] = i + "";
+                }
+
+                if (i > 0 && j > 0) {
+                    array[i][j] = "S";
+                }
+            }
+        }
+    }
+
+}
